@@ -2,7 +2,6 @@
   "domain": "here_travel_time",
   "name": "HERE Travel Time",
   "documentation": "https://www.home-assistant.io/integrations/here_travel_time",
-  "after_dependencies": ["device_tracker", "person", "select", "zone"],
   "requirements": ["herepy==2.0.0"],
   "version": "0.0.1",
   "codeowners": ["@eifinger"],

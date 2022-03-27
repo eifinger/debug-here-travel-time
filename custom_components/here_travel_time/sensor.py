@@ -18,9 +18,10 @@ from homeassistant.const import (
     CONF_UNIT_SYSTEM,
     CONF_UNIT_SYSTEM_IMPERIAL,
     CONF_UNIT_SYSTEM_METRIC,
+    EVENT_HOMEASSISTANT_STARTED,
     TIME_MINUTES,
 )
-from homeassistant.core import HomeAssistant
+from homeassistant.core import CoreState, HomeAssistant
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
@@ -196,7 +197,6 @@ async def async_setup_platform(
         here_client,
         here_travel_time_config,
     )
-    await coordinator.async_config_entry_first_refresh()
 
     sensor = HERETravelTimeSensor(name, traffic_mode, coordinator)
 
@@ -239,6 +239,15 @@ class HERETravelTimeSensor(SensorEntity, CoordinatorEntity):
         self._traffic_mode = traffic_mode
         self._attr_native_unit_of_measurement = TIME_MINUTES
         self._attr_name = name
+
+    async def async_added_to_hass(self) -> None:
+        """Handle when entity is added."""
+        if self.hass.state != CoreState.running:
+            self.hass.bus.async_listen_once(
+                EVENT_HOMEASSISTANT_STARTED, super().async_added_to_hass()
+            )
+        else:
+            await super().async_added_to_hass()
 
     @property
     def native_value(self) -> str | None:
