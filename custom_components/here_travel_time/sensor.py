@@ -250,6 +250,7 @@ class HERETravelTimeSensor(SensorEntity, CoordinatorEntity):
             await self.async_first_update()
 
     async def async_first_update(self):
+        _LOGGER.error("async_first_update")
         await super().async_added_to_hass()
         await self.coordinator.async_refresh()
 
