@@ -244,10 +244,14 @@ class HERETravelTimeSensor(SensorEntity, CoordinatorEntity):
         """Handle when entity is added."""
         if self.hass.state != CoreState.running:
             self.hass.bus.async_listen_once(
-                EVENT_HOMEASSISTANT_STARTED, super().async_added_to_hass()
+                EVENT_HOMEASSISTANT_STARTED, self.async_first_update()
             )
         else:
-            await super().async_added_to_hass()
+            await self.async_first_update()
+
+    async def async_first_update(self):
+        await super().async_added_to_hass()
+        await self.async_update()
 
     @property
     def native_value(self) -> str | None:
